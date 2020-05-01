@@ -1,0 +1,58 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+
+        function forEach(inputArray, callbackFunction, optionalThis) {
+            var callbackToBeRun = callbackFunction;
+            if (optionalThis) {
+                callbackToBeRun = callbackFunction.bind(optionalThis);
+            }
+
+            for (let i = 0; i < inputArray.length; i++) {
+                callbackToBeRun(inputArray[i], i, inputArray);
+            }
+        }
+
+
+        
+        tests({
+            'It should run the callback function array.length times.': function() {
+                var counter = 0
+                var inputArray = [1,2,3];
+                forEach(inputArray, function() {
+                    counter++;
+                });
+                eq(counter, inputArray.length)
+            },
+            'It should pass in the ith element as the first argument to the callback.': function() {
+                var inputArray = [1];
+                forEach(inputArray, function(number) {
+                    eq(number, 1);
+                });
+            },
+            'It should pass in the index as the second argument to the callback.': function() {
+                var inputArray = [1];
+                forEach(inputArray, function(number, currentIndex) {
+                    eq(currentIndex, 0);
+                });
+            },
+            'It should pass in the original array as the third argument to the callback.': function() {
+                var inputArray = [1,2,3,4];
+                forEach(inputArray, function(number, currentIndex, originalArray) {
+                    eq(originalArray, inputArray);
+                });
+            },
+            'It should accept an optional this argument.': function() {
+                var inputArray = [1,2,3,4];
+                forEach(inputArray, function(number, currentIndex, originalArray) {
+                    eq(this.description, "so");
+                }, {description: "so"});
+            }
+        });
+
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

@@ -1,0 +1,105 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        // The push() method adds one or more elements to the end of an array and returns the new length of the array.
+
+        // Syntax
+        // arr.push(element1[, ...[, elementN]])
+
+        // Parameters
+            // elementN
+            // The element(s) to add to the end of the array.
+
+        // Return value
+        // The new length property of the object upon which the method was called.
+
+        function push(array, ...elements) {
+            if (Array.isArray(this)) {
+                array = this;
+                elements = Array.from(arguments);
+            }
+
+            if (array.callee || typeof array === 'string') {
+                throw new TypeError("'" + array + "'" + '.push is not a function');
+            }
+            var isFalse = (Boolean(array.length));
+            if ((Boolean(array.length) === false)) {
+                array.length = 0;
+            }
+            elements.forEach((e) => {
+                array[parseInt(array.length)] = e;
+                if (typeof array === 'object' && Array.isArray(array) === false) {
+                    array.length++
+                }
+            });
+            return array.length;
+        }
+
+        tests({
+            'It should append any given values to the array (at the end)': function() {
+                let inputArray = [1];
+                push(inputArray, 2);
+                eq(inputArray.toString(), '1,2');
+            },
+            'It should take multiple values': function() {
+                let inputArray = [1];
+                push(inputArray, 2, 3, 4);
+                eq(inputArray[1], 2);
+                eq(inputArray[2], 3);
+                eq(inputArray[3], 4);
+            },
+            'It should return the new length property of the object upon which it was called': function() {
+                let inputArray = [1];
+                let result = push(inputArray, 2);
+                eq(result, 2);
+            },
+            'It should give an Uncaught TypeError if used on a string': function() {
+                var isTypeError = false;
+                try {
+                    push('', 1);
+                } catch(e) {
+                    isTypeError = (e instanceof TypeError);
+                }
+                eq(isTypeError, true);
+            },
+            'It should work on objects': function() {
+                let inputArray = {0:'dog',1:'bob',length:2};
+                let result = push(inputArray, 2);
+                eq(inputArray[2], 2);
+            },
+            'If length property cannot be converted into a number the index used is 0': function() {
+                let inputArray = {0:'dog',1:'bob',length:2};
+                let result = push(inputArray, 2);
+                eq(inputArray[2], 2);
+            },
+            'If no length property, create one at 0': function() {
+                let inputArray = {0:'dog',1:'bob'};
+                let result = push(inputArray, 2);
+                eq(inputArray[0], 2);
+                eq(inputArray.length, 1);
+            },
+            'It should give an Uncaught TypeError if used on an arguments object': function() {
+                var isTypeError = false;
+                function test() {
+                    try {
+                        push(arguments, 1);
+                    } catch(e) {
+                        isTypeError = (e instanceof TypeError);
+                    }
+                }
+                test(1,2,3);
+                eq(isTypeError, true);
+            },
+            'It should be able to merge 2 arrays using apply': function() {
+                let array1 = ['beef', 'burger'];
+                let array2 = ['cheese', 'lettuce'];
+                push.apply(array1, array2);
+                eq(array1.toString(), 'beef,burger,cheese,lettuce');
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

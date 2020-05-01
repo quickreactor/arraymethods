@@ -1,0 +1,83 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        // The shift() method removes the first element from an array and returns that removed element. This method changes the length of the array.
+
+        // Syntax
+        // arr.shift()
+        // Return value
+        // The removed element from the array; undefined if the array is empty.
+
+        // Description
+        // The shift method removes the element at the zeroeth index and shifts the values at consecutive indexes down, then returns the removed value. If the length property is 0, undefined is returned.
+
+        // shift is intentionally generic; this method can be called or applied to objects resembling arrays. Objects which do not contain a length property reflecting the last in a series of consecutive, zero-based numerical properties may not behave in any meaningful manner.
+
+        // Array.prototype.pop() has similar behavior to shift, but applied to the last element in an array.
+
+
+        function shift (array) {
+            if (!Array.isArray(array) && !this.length) {
+                throw new TypeError('Not an array, Jay!');
+            }
+            if (this.length) {
+                array = this;
+            }
+            if (array.length === 0) {
+                return undefined;
+            }
+            var shiftedElement = array[0];
+            if (Array.isArray(array) === false) {
+                delete array[0];
+                array.length--;
+            } else {
+                array.splice(0,1);
+            }
+            return shiftedElement;
+        }
+
+        tests({
+            'It should remove and return the first element of the input array': function() {
+                var inputArray = [1,2];
+                var result = shift(inputArray);
+                eq(result, 1);
+                eq(inputArray.length , 1);
+                eq(inputArray[0], 2);
+            },
+            'It should decrement the length of the input array by 1': function() {
+                var inputArray = [1];
+                var arrayLength = inputArray.length;
+                var result = shift(inputArray);
+                eq(arrayLength === inputArray.length, false);
+            },
+            'It should return undefined if the array is empty': function() {
+                var inputArray = [];
+                var result = shift(inputArray);
+                eq(result, undefined);
+            },
+            'It should work on array-like objects (return and remove first element)': function() {
+                var inputArray = {0:1,1:2,length:2};
+                var result = shift.apply(inputArray);
+                eq(result, 1);
+                eq(inputArray.length, 1);
+            },
+            'It should decrement the length of array-like objects by 1': function() {
+                var inputArray = {0:1,1:2,length:2};
+                var result = shift.apply(inputArray);
+                eq(result, 1);
+                eq(inputArray.length, 1);
+            },
+            'It should TypeError on non arrays': function() {
+                var inputArray = {0:1,1:2};
+                try {
+                    var result = shift.apply(inputArray);
+                } catch(e) {
+                    eq(e instanceof TypeError, true);
+                }
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>

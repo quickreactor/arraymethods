@@ -1,0 +1,55 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        //The reverse() method reverses an array in place. The first array element becomes the last, and the last array element becomes the first.
+
+
+        // Syntax
+        // a.reverse()
+
+        // Return value
+        // The reversed array.
+
+        function reverse(array) {
+            if (!Array.isArray(array)) {
+                throw new TypeError('not an array');
+            }
+            var forwardArray = [...array];
+            j = 0;
+            for (let i = array.length -1; i >= 0; i--) {
+                array[j] = forwardArray[i];
+                j++
+            }
+            return array;
+        }
+
+
+        tests({
+            'It should reverse the array elements order': function() {
+                let inputArray = [1,2,3];
+                reverse(inputArray);
+                eq(inputArray.toString(), '3,2,1');
+            },
+            'It should return the reversed array': function() {
+                let inputArray = [1,2,3];
+                let result = reverse(inputArray);
+                eq(result.toString(), '3,2,1');
+            },
+            'It should change the original array': function() {
+                let inputArray = [1,2,3];
+                reverse(inputArray);
+                eq(inputArray.toString(), '3,2,1');
+            },
+            'It should throw TypeError if not an array': function() {
+                try {
+                    reverse('dog');
+                } catch(e) {
+                    eq(e instanceof TypeError, true);
+                }
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>

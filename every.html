@@ -1,0 +1,132 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+    
+    // The every() method tests whether all elements in the array pass the test implemented by the provided function. It returns a Boolean value.
+
+    // Caution: Calling this method on an empty array will return true for any condition!
+   
+    //     arr.every(callback(element[, index[, array]])[, thisArg])
+    // Parameters
+        // callback
+        // A function to test for each element, taking three arguments:
+            // element
+            // The current element being processed in the array.
+
+            // index Optional
+            // The index of the current element being processed in the array.
+
+            // array Optional
+            // The array every was called upon.
+
+        // thisArg Optional
+        // A value to use as this when executing callback.
+
+        // Return value
+        // true if the callback function returns a truthy value for every array element. Otherwise, false.
+
+    function every (inputArray, callback, optionalThis) {
+        var callbackToBeRun = callback;
+        var length = inputArray.length
+
+        if (optionalThis) {
+            callbackToBeRun = callback.bind(optionalThis);
+        }
+        for (let i = 0; i < length; i++) {
+            if (i in inputArray) {
+                if (callbackToBeRun(inputArray[i], i, inputArray) === false) {
+                return false;
+                };
+            }
+
+        }
+        return true;
+    };
+    
+
+        tests({
+            'It should run the callback function array.length times.': function() {
+                var counter = 0
+                var inputArray = [1,2,3];
+                every(inputArray, function() {
+                    counter++;
+                });
+                eq(counter, inputArray.length)
+            },
+            'It should pass in the ith element as the first argument to the callback.': function() {
+                var inputArray = [1];
+                every(inputArray, function(element) {
+                    eq(element, 1);
+                });
+            },
+            'It should pass in the index as the second argument to the callback.': function() {
+                var inputArray = [1];
+                every(inputArray, function(element, currentIndex) {
+                    eq(currentIndex, 0);
+                });
+            },
+            'It should pass in the original array as the third argument to the callback.': function() {
+                var inputArray = [1,2,3,4];
+                every(inputArray, function(element, currentIndex, originalArray) {
+                    eq(this.name, 'Jemima Puddleduck');
+                }, {name: 'Jemima Puddleduck'});
+            },
+            'It should accept an optional this argument.': function() {
+                var inputArray = [1,2,3,4];
+                every(inputArray, function(element, currentIndex, originalArray) {
+                    eq(this.description, "so");
+                }, {description: "so"});
+            },
+            'It should return true if all elements match the testing criteria': function() {
+                var inputArray = [51,52,53,54];
+                var result = every(inputArray, function(element, currentIndex, originalArray) {
+                    return element > 50;
+                });
+                eq(result, true)
+            },
+            'It should return false immediately if one element fails the testing criteria': function() {
+                var inputArray = [1,2,3,4];
+                var count = 0;
+                var result = every(inputArray, function(element, currentIndex, originalArray) {
+                    count++;
+                    return element === 1;
+                });
+                eq(result, false)
+                eq(count, 2);
+            },
+            'It should not run callback on empty or deleted indexes': function() {
+                var inputArray = [,1,,];
+                var count = 0;
+                var result = every(inputArray, function(element, currentIndex, originalArray) {
+                    count++
+                });
+                eq(count, 1)
+            },
+            'If called on an empty array it should return true': function() {
+                var inputArray = [,,,,];
+                var result = every(inputArray, function(element, currentIndex, originalArray) {
+                    return element === 2;
+                });
+                eq(result, true)
+            },
+            'If elements are added by callback it should not visit them.': function() {
+                var inputArray = [1,2];
+                var count = 0;
+                every(inputArray, function(element) {
+                    if (element === 1) {
+                        inputArray.push('yolo')
+                    }
+                    count++;
+                });
+                eq(count, 2);
+            }
+        });
+
+
+
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

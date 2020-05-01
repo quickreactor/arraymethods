@@ -1,0 +1,200 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+
+        // The splice() method changes the contents of an array by removing or replacing existing elements and/or adding new elements in place.
+
+
+        // Syntax
+        // let arrDeletedItems = array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+
+        // Parameters
+
+            // start
+            // The index at which to start changing the array.
+            // If greater than the length of the array, start will be set to the length of the array. In this case, no element will be deleted but the method will behave as an adding function, adding as many element as item[n*] provided.
+            // If negative, it will begin that many elements from the end of the array. (In this case, the origin -1, meaning -n is the index of the nth last element, and is therefore equivalent to the index of array.length - n.)
+            // If array.length + start is less than 0, it will begin from index 0.
+
+            // deleteCount Optional
+            // An integer indicating the number of elements in the array to remove from start.
+            // If deleteCount is omitted, or if its value is equal to or larger than array.length - start (that is, if it is equal to or greater than the number of elements left in the array, starting at start), then all the elements from start to the end of the array will be deleted.
+            // If deleteCount is 0 or negative, no elements are removed. In this case, you should specify at least one new element (see below).
+            
+            // item1, item2, ... Optional
+            // The elements to add to the array, beginning from start. If you do not specify any elements, splice() will only remove elements from the array.
+
+        // Return value
+        // An array containing the deleted elements.
+
+        // If only one element is removed, an array of one element is returned.
+
+        // If no elements are removed, an empty array is returned.
+
+        // Description
+        // If the specified number of elements to insert differs from the number of elements being removed, the array's length will be different at the end of the call.
+
+        function spliceOld (array, start, deleteCount, ...itemsToAdd) {
+            console.log(itemsToAdd);
+            let deletedItems = []; // base state of return if nothing deleted
+
+            let startingIndex = start;
+
+            // deleting items
+            deletedItems = array.filter((e,i,a) => {
+                return i >= start && i < (start + deleteCount);
+            });
+            let newArray = array.filter((e,i,a) => {
+                return i < start || i >= (start + deleteCount);
+            });
+
+            // adding items
+
+            itemsToAdd.forEach((e,i) => {
+                newArray.push(e);
+            });
+
+            //mapping the new array onto the old
+            newArray.forEach((e,i) => { 
+                array[i] = newArray[i];
+            });
+
+            // trimming length
+            array.length = newArray.length 
+
+            // return
+            console.log('retained', newArray);
+            console.log('deleted', deletedItems);
+            return deletedItems
+        }
+        
+        function splice (array, start, deleteCount, ...itemsToAdd) {
+            
+            if (start < 0) {
+                start = array.length + start;
+                if (start < 0) {
+                    start = 0;
+                }
+            }
+
+            if (deleteCount === undefined || deleteCount >= array.length - start) {
+                deleteCount = array.length - start;
+            }
+            if (deleteCount < 0) {
+                deleteCount = 0;
+            }
+
+            let preSplice = array.slice(0,start);
+            let deletedItems = array.slice(start, start + deleteCount);
+            let postSplice = array.slice(start + deleteCount, array.length);
+
+            let newArray = preSplice.concat(itemsToAdd, postSplice);
+
+            //mapping the new array onto the old
+            newArray.forEach((e,i) => { 
+                array[i] = newArray[i];
+            });
+
+            // trimming length
+            array.length = newArray.length 
+
+            // return
+            console.log('retained', newArray);
+            console.log('deleted', deletedItems);
+            return deletedItems
+        }
+        
+
+
+        tests({
+            'It should return an array containing the deleted elements': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,0,2);
+                eq(result.join(), '1,2');
+            },
+            'If no elements are deleted an empty array is returned.': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,3,0);
+                eq(result.length, 0);
+            },
+            'It should be able to remove elements from the original array': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,2,1);
+                eq(result.join(), '3');
+                eq(inputArray.join(), '1,2,4');
+            },
+            'It should be able to add elements': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,4,0,5,6);
+                eq(result.length, 0);
+                eq(inputArray.join(), '1,2,3,4,5,6');
+            },
+            'It should be able to remove and add elements at the same time': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,1,2,5,6);
+                eq(result.join(), '2,3');
+                eq(inputArray.join(), '1,5,6,4');
+            },
+            'If start is greater than array.length start will be set to the length of the array making it purely add items on the end': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,5,2,5,6);
+                eq(result.length, 0);
+                eq(inputArray.join(), '1,2,3,4,5,6');
+            },
+            'If start is negative it should begin that many elements from the end of the array': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,-2,2,5,6);
+                eq(result.join(), '3,4');
+                eq(inputArray.join(), '1,2,5,6');
+            },
+            'If array. length + start is less than 0 it will begin at array[0]': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,-5,2,5,6);
+                eq(result.join(), '1,2');
+                eq(inputArray.join(), '5,6,3,4');
+            },
+            'If no deleteCount then all the elements from start to the end of the array will be deleted.': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,1);
+                eq(result.join(), '2,3,4');
+                eq(inputArray.join(), '1');
+            },
+            'If deleteCount >= array.length - start (i.e the number of elements left after start), then all the elements from start to the end of the array will be deleted.': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,1,5);
+                eq(result.join(), '2,3,4');
+                eq(inputArray.join(), '1');
+            },
+            'If deleteCount is 0, no items are removed (there should be at least one element to add)': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,1,0,'lol');
+                eq(result.length, 0);
+                eq(inputArray.join(), '1,lol,2,3,4');
+            },
+            'If deleteCount is negative, no items are removed (there should be at least one element to add)': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,1,-2,'lol');
+                eq(result.length, 0);
+                eq(inputArray.join(), '1,lol,2,3,4');
+            },
+            'If deleteCount is negative, no items are removed no add test': function() {
+                var inputArray = [1,2,3,4];
+                var result = splice(inputArray,1,-2);
+                eq(result.length, 0);
+                eq(inputArray.join(), '1,2,3,4');
+            },
+            'If the specified number of elements to insert differs from the number of elements being removed, the arrays length will be different at the end of the call.': function() {
+                var inputArray = [1,2,3,4];
+                var inputLength = inputArray.length
+                var result = splice(inputArray,2,2,'too','much','stuff');
+                eq(result.length, 2);
+                eq(inputArray.join(), '1,2,too,much,stuff');
+                eq(inputArray.length === inputLength, false);
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

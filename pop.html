@@ -1,0 +1,95 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        // The pop() method removes the last element from an array and returns that element. This method changes the length of the array.
+
+        //         Syntax
+        // arr.pop()
+
+        // Return value
+        // The removed element from the array; undefined if the array is empty.
+
+        // Description
+        // The pop method removes the last element from an array and returns that value to the caller.
+
+        // pop is intentionally generic; this method can be called or applied to objects resembling arrays. Objects which do not contain a length property reflecting the last in a series of consecutive, zero-based numerical properties may not behave in any meaningful manner.
+
+        // If you call pop() on an empty array, it returns undefined.
+
+        // Array.prototype.shift() has similar behavior to pop, but applied to the first element in an array.
+
+        // It should remove and return the last element of the input array
+        // It should change the length of the input array
+        // It should return undefined is the array is empty
+        // It should work on array-like objects (return and remove last element)
+        // It should decrement the length of array-like objects
+
+        function pop (array) {
+            if (!Array.isArray(array) && !this.length) {
+                throw new TypeError('Not an array, Jay!');
+            }
+            if (this.length) {
+                array = this;
+            }
+            if (array.length === 0) {
+                return undefined;
+            }
+            var poppedElement = array[array.length - 1];
+            if (Array.isArray(array) === false) {
+                delete array[array.length -1];
+            }
+            array.length--;
+            return poppedElement;
+        }
+
+        tests({
+            'It should remove and return the last element of the input array': function() {
+                var inputArray = [1];
+                var result = pop(inputArray);
+                eq(result, 1);
+                eq(inputArray.length , 0);
+            },
+            'It should change the length of the input array': function() {
+                var inputArray = [1];
+                var arrayLength = inputArray.length;
+                var result = pop(inputArray);
+                eq(arrayLength === inputArray.length, false);
+            },
+            'It should return undefined if the array is empty': function() {
+                var inputArray = [];
+                var result = pop(inputArray);
+                eq(result, undefined);
+            },
+            'It should work on array-like objects (return and remove last element)': function() {
+                var inputArray = {0:1,1:2,length:2};
+                var result = pop.apply(inputArray);
+                eq(result, 2);
+                eq(inputArray.length, 1);
+            },
+            'It should decrement the length of array-like objects using apply': function() {
+                var inputArray = {0:1,1:2,length:2};
+                var result = pop.apply(inputArray);
+                eq(result, 2);
+                eq(inputArray.length, 1);
+            },
+            'It should decrement the length of array-like objects using call': function() {
+                var inputArray = {0:1,1:2,length:2};
+                var result = pop.call(inputArray);
+                eq(result, 2);
+                eq(inputArray.length, 1);
+            },
+            'It should TypeError on non arrays': function() {
+                var inputArray = {0:1,1:2};
+                try {
+                    var result = pop.apply(inputArray);
+                } catch(e) {
+                    eq(e instanceof TypeError, true);
+                }
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

@@ -1,0 +1,138 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+    
+    // The some() method tests whether at least one element in the array passes the test 
+    // implemented by the provided function. It returns a Boolean value. 
+
+    // Caution: Calling this method on an empty array returns false for any condition!
+
+    //     Syntax
+
+    // arr.some(callback(element[, index[, array]])[, thisArg])
+
+    // Parameters
+
+    // callback
+    // A function to test for each element, taking three arguments:
+
+        // element
+        // The current element being processed in the array.
+
+        // index Optional
+        // The index of the current element being processed in the array.
+
+        // arrayOptional
+        // The array some() was called upon.
+
+    // thisArgOptional
+    // A value to use as this when executing callback.
+
+    // Return value
+    // true if the callback function returns a truthy value for at least one element in the array. Otherwise, false.
+
+    function some (inputArray, callback, optionalThis) {
+        var callbackToBeRun = callback;
+        var length = inputArray.length
+
+        if (optionalThis) {
+            callbackToBeRun = callback.bind(optionalThis);
+        }
+        var resultSoFar = false;
+        for (let i = 0; i < length; i++) {
+            if (i in inputArray) {
+                if (callbackToBeRun(inputArray[i], i, inputArray)) {
+                return true;
+                };
+            }
+        }
+        return false;
+    };
+    
+
+        tests({
+            'It should run the callback function array.length times.': function() {
+                var counter = 0
+                var inputArray = [1,2,3];
+                some(inputArray, function() {
+                    counter++;
+                });
+                eq(counter, inputArray.length)
+            },
+            'It should pass in the ith element as the first argument to the callback.': function() {
+                var inputArray = [1];
+                some(inputArray, function(element) {
+                    eq(element, 1);
+                });
+            },
+            'It should pass in the index as the second argument to the callback.': function() {
+                var inputArray = [1];
+                some(inputArray, function(element, currentIndex) {
+                    eq(currentIndex, 0);
+                });
+            },
+            'It should pass in the original array as the third argument to the callback.': function() {
+                var inputArray = [1,2,3,4];
+                some(inputArray, function(element, currentIndex, originalArray) {
+                    eq(this.name, 'Jemima Puddleduck');
+                }, {name: 'Jemima Puddleduck'});
+            },
+            'It should accept an optional this argument.': function() {
+                var inputArray = [1,2,3,4];
+                some(inputArray, function(element, currentIndex, originalArray) {
+                    eq(this.description, "so");
+                }, {description: "so"});
+            },
+            'It should immediately return true if the callback function returns a truthy value for an element in the array': function() {
+                var inputArray = [51,52,53,54];
+                var count = 0;
+                var result = some(inputArray, function(element, currentIndex, originalArray) {
+                    count++
+                    return element > 51;
+                });
+                eq(result, true)
+                eq(count, 2);
+            },
+            'It should return false if the callback function does not return a truthy value for at least one element in the array': function() {
+                var inputArray = [1,2,3,4];
+                var result = some(inputArray, function(element, currentIndex, originalArray) {
+                    return element === 999;
+                });
+                eq(result, false)
+            },
+            'It should not run callback on empty or deleted indexes': function() {
+                var inputArray = [,1,,];
+                var count = 0;
+                var result = some(inputArray, function(element, currentIndex, originalArray) {
+                    count++
+                });
+                eq(count, 1)
+            },
+            'If called on an empty array it should return false': function() {
+                var inputArray = [,,,,];
+                var result = some(inputArray, function(element, currentIndex, originalArray) {
+                    return element === 2;
+                });
+                eq(result, false)
+            },
+            'If elements are added by callback it should not visit them.': function() {
+                var inputArray = [1,2];
+                var count = 0;
+                some(inputArray, function(element) {
+                    if (element === 1) {
+                        inputArray.push('yolo')
+                    }
+                    count++;
+                });
+                eq(count, 2);
+            }
+        });
+
+
+
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

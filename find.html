@@ -1,0 +1,111 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+    
+    // Syntax
+    // arr.find(callback(element[, index[, array]])[, thisArg])
+
+    // Parameters
+
+    // callback
+    // Function to execute on each value in the array, taking 3 arguments:
+
+        // element
+        // The current element in the array.
+        //
+        // index Optional
+        // The index (position) of the current element in the array.
+        //
+        // array Optional
+        // The array that find was called on.
+
+    // thisArg Optional
+    // Object to use as this inside callback.
+
+    // Return value
+    // The value of the first element in the array that satisfies the provided testing
+    // function. Otherwise, undefined is returned.
+
+    function find (inputArray, callback, optionalThis) {
+        var callbackToBeRun = callback;
+        var length = inputArray.length
+
+        if (optionalThis) {
+            callbackToBeRun = callback.bind(optionalThis);
+        }
+        for (let i = 0; i < length; i++) {
+            if (callbackToBeRun(inputArray[i], i, inputArray)) {
+                return inputArray[i];
+            };
+        }
+    };
+    
+
+        tests({
+            'It should run the callback function array.length times.': function() {
+                var counter = 0
+                var inputArray = [1,2,3];
+                find(inputArray, function() {
+                    counter++;
+                });
+                eq(counter, inputArray.length)
+            },
+            'It should pass in the ith element as the first argument to the callback.': function() {
+                var inputArray = [1];
+                find(inputArray, function(element) {
+                    eq(element, 1);
+                });
+            },
+            'It should pass in the index as the second argument to the callback.': function() {
+                var inputArray = [1];
+                find(inputArray, function(element, currentIndex) {
+                    eq(currentIndex, 0);
+                });
+            },
+            'It should pass in the original array as the third argument to the callback.': function() {
+                var inputArray = [1,2,3,4];
+                find(inputArray, function(element, currentIndex, originalArray) {
+                    eq(this.name, 'Jemima Puddleduck');
+                }, {name: 'Jemima Puddleduck'});
+            },
+            'It should accept an optional this argument.': function() {
+                var inputArray = [1,2,3,4];
+                find(inputArray, function(element, currentIndex, originalArray) {
+                    eq(this.description, "so");
+                }, {description: "so"});
+            },
+            'It should immediately return the first element that matches the test criteria.': function() {
+                var inputArray = [1,2,3,4];
+                var result = find(inputArray, function(element, currentIndex, originalArray) {
+                    return element > 2;
+                });
+                eq(result, 3)
+            },
+            'If elements are added by callback it should not visit them.': function() {
+                var inputArray = [1,2];
+                var count = 0;
+                find(inputArray, function(element) {
+                    if (element === 1) {
+                        inputArray.push('yolo')
+                    }
+                    count++;
+                });
+                eq(count, 2);
+            },
+            'If no elements satisfy the testing criteria it should return undefined': function() {
+                var result = find([1,2,3], function(element) {
+                    return element > 4;
+                });
+                eq(result, undefined)
+            }
+            
+        });
+
+
+
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

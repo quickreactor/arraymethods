@@ -1,0 +1,97 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+      
+        function map(inputArray, callback, optionalThis) {
+            var mappedArray = [];
+
+            for (let i = 0; i < inputArray.length; i++) {
+                callbackToBeRun = callback;
+
+                if (optionalThis) {
+                    callbackToBeRun = callback.bind(optionalThis);
+                }
+
+                if (i in inputArray === false) {
+                    mappedArray.push(inputArray[i]);
+                } else {
+                    mappedArray.push(callbackToBeRun(inputArray[i], i, inputArray));
+                }
+            }
+            
+            return mappedArray;
+
+        }
+
+        tests({
+            'It should run the callback function array.length times.': function() {
+                var counter = 0
+                var inputArray = [1,2,3];
+                map(inputArray, function() {
+                    counter++;
+                });
+                eq(counter, inputArray.length)
+            },
+            'It should pass in the ith element as the first argument to the callback.': function() {
+                var inputArray = [1];
+                map(inputArray, function(number) {
+                    eq(number, 1);
+                });
+            },
+            'It should pass in the index as the second argument to the callback.': function() {
+                var inputArray = [1];
+                map(inputArray, function(number, currentIndex) {
+                    eq(currentIndex, 0);
+                });
+            },
+            'It should pass in the original array as the third argument to the callback.': function() {
+                var inputArray = [1,2,3,4];
+                map(inputArray, function(number, currentIndex, originalArray) {
+                    eq(originalArray, inputArray);
+                });
+            },
+            'It should accept an optional this argument.': function() {
+                var inputArray = [1,2,3,4];
+                map(inputArray, function(number, currentIndex, originalArray) {
+                    eq(this.description, "so");
+                }, {description: "so"});
+            },
+            'It should return an array.': function() {
+                var inputArray = [1,2,3,4];
+                var mappedArray = map(inputArray, function(number, currentIndex, originalArray) {
+                });
+                eq(Array.isArray(mappedArray), true);
+            },
+            'It should return a new array.': function() {
+                var inputArray = [1,2,3,4];
+                var mappedArray = map(inputArray, function(number, currentIndex, originalArray) {
+                });
+                eq(mappedArray !== inputArray, true);
+            },
+            'It should return a new array that only has elements transformed by callback.': function() {
+                var inputArray = [9,10,12];
+                var mappedArray = map(inputArray, function(number, currentIndex, originalArray) {
+                    return number * 2;
+                });
+                eq(mappedArray[0], 18)
+                eq(mappedArray[1], 20)
+                eq(mappedArray[2], 24)
+            },
+            'It should skip missing elements.': function() {
+                var inputArray = [9,,10,12,undefined];
+                var mappedArray = map(inputArray, function(number, currentIndex, originalArray) {
+                    return number * 2;
+                });
+                console.log(mappedArray);
+                eq(mappedArray[0], 18)
+                eq(mappedArray[1], undefined)
+                eq(mappedArray[3], 24)
+            }
+        });
+
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

@@ -1,0 +1,157 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        // The copyWithin() method shallow copies part of an array to another location in the same array and returns it without modifying its length.
+
+        // Syntax
+        // arr.copyWithin(target[, start[, end]])
+
+        // Parameters
+            // target
+            // Zero-based index at which to copy the sequence to. If negative, target will be counted from the end.
+            // If target is at or greater than arr.length, nothing will be copied. If target is positioned after start, the copied sequence will be trimmed to fit arr.length.
+
+            // start Optional
+            // Zero-based index at which to start copying elements from. If negative, start will be counted from the end.
+            // If start is omitted, copyWithin will copy from index 0. 
+
+            // end Optional
+            // Zero-based index at which to end copying elements from. copyWithin copies up to but not including end. If negative, end will be counted from the end.
+            // If end is omitted, copyWithin will copy until the last index (default to arr.length).
+
+        // Return value
+        // The modified array.
+
+        function copyWithin(array, target, start, end) {
+            if (!Array.isArray(array)) {
+                throw new TypeError('Nope, not an array');
+            }
+            if (target > array.length) {
+                return array;
+            }
+            let copyStartingIndex = 0;
+            let copyEndingIndex = array.length;
+            let cloneArray = [...array]
+
+            if (target < 0) {
+                target += array.length
+            }
+            if (start) {
+                if (start >= 0) { // is start is positive
+                    copyStartingIndex = start;
+                    if (target > start) { // if target exceeds start
+                        copyEndingIndex -= target - start;
+                    }
+                } else { // start is negative
+                    copyStartingIndex = array.length + start;
+                }
+            }
+            if (end) {
+                if (end >= 0) {
+                    copyEndingIndex = end;
+                } else {
+                    copyEndingIndex = array.length + end;
+                }
+
+            }
+
+            let maxItemsToCopy = array.length - target;
+            let numItemsToCopy = copyEndingIndex - copyStartingIndex;
+
+            if (numItemsToCopy < 0) {
+                return array;
+            }
+            if (numItemsToCopy > maxItemsToCopy) {
+                numItemsToCopy = maxItemsToCopy;
+            }
+
+            let j = 0;
+            while (numItemsToCopy > 0) {
+                array[target+j] = cloneArray[copyStartingIndex+j];
+                numItemsToCopy--;
+                j++;
+            }
+            return array;
+            }
+
+
+
+        tests({
+            'It should copy elements from one part of an array to another': function() {
+                var inputArray = [1,2,3,4,5]
+                copyWithin(inputArray, 0, 2);
+                eq(inputArray.toString(), '3,4,5,4,5');
+            },
+            'It should not modify length': function() {
+                var inputArray = [1,2,3,4,5]
+                var result = copyWithin(inputArray, 0, 2);
+                eq(result.length, 5);
+            },
+            'It should return the array after copying is done': function() {
+                var inputArray = [1,2,3,4,5]
+                copyWithin(inputArray, 0, 2);
+                eq(inputArray.toString(), '3,4,5,4,5');
+            },
+            'It should copy to the target index': function() {
+                var inputArray = [1,2,3]
+                copyWithin(inputArray, 0, 2);
+                eq(inputArray.toString(), '3,2,3');
+            },
+            'If target is greater than arr.length, nothing will be copied': function() {
+                var inputArray = [1,2,3]
+                copyWithin(inputArray, 4, 2);
+                eq(inputArray.toString(), '1,2,3');
+            },
+            'If target is after start, the copied sequence will be trimmed so as to not lengthen the array': function() {
+                var inputArray = [1,2,3,4,5]
+                copyWithin(inputArray, 3, 2);
+                eq(inputArray.toString(), '1,2,3,3,4');
+            },
+            'If start value given start copying from that index': function() {
+                var inputArray = [1,2,3,4,5]
+                copyWithin(inputArray, 0, 2);
+                eq(inputArray.toString(), '3,4,5,4,5');
+            },
+            'If start is negative it is treated as arr.length - start': function() {
+                var inputArray = [1,2,3,4,5]
+                copyWithin(inputArray, 0, -3);
+                eq(inputArray.toString(), '3,4,5,4,5');
+            },
+            'If no start copying starts at 0': function() {
+                var inputArray = [1,2,3,4,5]
+                copyWithin(inputArray, 3);
+                eq(inputArray.toString(), '1,2,3,1,2');
+            },
+            'If end value given end copying before that index': function() {
+                var inputArray = [1,2,3,4,5,6]
+                copyWithin(inputArray, 3, 0, 2);
+                eq(inputArray.toString(), '1,2,3,1,2,6');
+            },
+            'If end is negative it is treated as arr.length - end': function() {
+                var inputArray = [1,2,3,4,5,6]
+                copyWithin(inputArray, 3, 0, -4);
+                eq(inputArray.toString(), '1,2,3,1,2,6');
+            },
+            'If no end copying ends before arr.length': function() {
+                var inputArray = [1,2,3,4,5,6]
+                copyWithin(inputArray, 3, 0);
+                eq(inputArray.toString(), '1,2,3,1,2,3');
+            },
+            'If end is less than start, just return array': function() {
+                var inputArray = [1,2,3,4,5,6]
+                copyWithin(inputArray, 3, 4, 2);
+                eq(inputArray.toString(), '1,2,3,4,5,6')
+            },
+            'Error if not an array': function() {
+                try {
+                    copyWithin('inputArray', 3, 4, 2);
+                } catch(e) {
+                    eq(e instanceof TypeError, true);
+                }
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>

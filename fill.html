@@ -1,0 +1,92 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+
+        // The fill() method changes all elements in an array to a static value, from a start index (default 0) to an end index (default array.length). It returns the modified array.
+
+        //         Syntax
+        // arr.fill(value[, start[, end]])
+
+        // Parameters
+            // value
+            // Value to fill the array with. (Note all elements in the array will be this exact value.)
+
+            // start Optional
+            // Start index, default 0.
+
+            // end Optional
+            // End index, default arr.length.
+
+        // Return value
+        // The modified array, filled with value.
+
+        function fill(array, value, start, end) {
+            if (!Array.isArray(array)) {
+                throw new TypeError('not an array');
+            }
+            let startingIndex = 0;
+            let endingIndex = array.length;
+            if (start) {
+                if (start < 0) {
+                    startingIndex = array.length + start;
+                } else {
+                    startingIndex = start;
+                }
+            }
+            if (end) {
+                if (end < 0) {
+                    endingIndex = array.length + end;
+                } else {
+                    endingIndex = end;
+                }
+            }
+            for (let i = startingIndex; i < endingIndex; i++) {
+                array[i] = value;
+            }
+            return array;
+        }
+
+        tests({
+            'It should change all elements in an array to a static value': function() {
+                inputArray = [1,2,3,4,5];
+                var result = fill(inputArray, 5);
+                eq(inputArray.toString(), '5,5,5,5,5');
+            },
+            'It should return the modified array': function() {
+                inputArray = [1,2,3,4,5];
+                var result = fill(inputArray, 5);
+                eq(result.toString(), '5,5,5,5,5');
+            },
+            'If start it should start from the provided index': function() {
+                inputArray = [1,2,3,4,5];
+                var result = fill(inputArray, 5, 1);
+                eq(inputArray.toString(), '1,5,5,5,5');
+            },
+            'If start is negative it is treated as array.length + start': function() {
+                inputArray = [1,2,3,4,5];
+                var result = fill(inputArray, 5, -2);
+                eq(inputArray.toString(), '1,2,3,5,5');
+            },
+            'If end it should end at the provided index -1': function() {
+                inputArray = [1,2,3,4,5];
+                var result = fill(inputArray, 5, 0, 2);
+                eq(inputArray.toString(), '5,5,3,4,5');
+            },
+            'If end is negative it is treated as array.length + end': function() {
+                inputArray = [1,2,3,4,5];
+                var result = fill(inputArray, 5, 0, -3);
+                eq(inputArray.toString(), '5,5,3,4,5');
+            },
+            'Error if not array': function() {
+                try {
+                    fill('dog',5);
+                } catch(e) {
+                    eq(e instanceof TypeError, true);
+                }
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>

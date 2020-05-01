@@ -1,0 +1,122 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        // The includes() method determines whether an array includes a certain value among its entries,
+        // returning true or false as appropriate.
+
+        //         Syntax
+        // arr.includes(valueToFind[, fromIndex])
+
+        // Parameters
+            // valueToFind
+            // The value to search for.
+
+            // Note: When comparing strings and characters, includes() is case-sensitive.
+
+            // fromIndex Optional
+            // The position in this array at which to begin searching for valueToFind.
+            // The first character to be searched is found at fromIndex for positive values of fromIndex, or at arr.length + fromIndex for negative values of fromIndex (using the absolute value of fromIndex as the number of characters from the end of the array at which to start the search).
+            // Defaults to 0.
+
+        // Return value
+        // A Boolean which is true if the value valueToFind is found within the array (or the part of the array indicated by the index fromIndex, if specified).
+
+        // Values of zero are all considered to be equal, regardless of sign. (That is, -0 is considered to be equal to both 0 and +0), but false is not considered to be the same as 0.
+
+        // It should return true if the source array contains the search value among its entries
+        // It should return false if the source array does not contains the search value among its entries
+
+        // If fromIndex is positive it should start searching at the specified fromIndex
+        // If fromIndex is negative it should start searching at array.length + fromIndex
+        // If fromIndex is negative and array.length + fromIndex is less or equal to -1 * array.length the whole array is searched
+        // If fromIndex is greater than or equal to array.length, return false
+        // When comparing strings and characters it should be case-sensitive
+        // fromIndex should default to 0
+        // Values of 0, -0 and +0 should be considered equal
+        // It should work on strings or arguments object
+
+        function includes(array, searchElement, fromIndex) {
+            let startingIndex = 0
+            if (fromIndex >= 0) {
+                startingIndex = fromIndex;
+            }
+            if (fromIndex < 0) {
+                if ((array.length + fromIndex) > -1) {
+                    startingIndex = fromIndex + array.length;
+                }
+            }
+
+            if (searchElement !== searchElement) {
+                for (let i = startingIndex; i < array.length; i++) {
+                    if (array[i] !== array[i]) {
+                        return true;
+                    }
+                } 
+            } else {
+                for (let i = startingIndex; i < array.length; i++) {
+                    if (array[i] === searchElement) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    
+
+        tests({
+            'It should return true if the source array contains the search value among its entries': function() {
+                var result = includes([1], 1);
+                eq(result, true);
+            },
+            'It should return false if the source array does not contains the search value among its entries': function() {
+                var result = includes([1], 2);
+                eq(result, false);
+            },
+
+            'If fromIndex is positive it should start searching at the specified fromIndex': function() {
+                var result = includes([1,2,3], 1, 1);
+                eq(result, false);
+            },
+            'If fromIndex is negative it should start searching at array.length + fromIndex': function() {
+                var result = includes([1,2,3,4], 1, -2);
+                eq(result, false);
+            },
+            'If fromIndex is negative and array.length + fromIndex is less or equal to -1 * array.length the whole array is searched': function() {
+                var result = includes([0,2,3,1], 0, -7);
+                eq(result, true);
+            },
+            'If fromIndex is greater than or equal to array.length, return false': function() {
+                var result = includes([0,2,3,1], 0, 4);
+                eq(result, false);
+            },
+            'It should work on strings or arguments object or other iterables': function() {
+                var result = includes({0:'b', 1:'z', length:2}, 'z');
+                eq(result, true);
+            },
+            'When comparing strings and characters it should be case-sensitive': function() {
+                var result = includes('barnaby', 'N');
+                eq(result, false);
+            },
+            'If no fromIndex - should default to 0': function() {
+                var result = includes([1,2], 1);
+                eq(result, true);
+            },
+            'Values of 0, -0 and +0 should be considered equal': function() {
+                var result = includes([-0], 0);
+                var result2 = includes([0], +0);
+                eq(result2, true);
+                eq(result, true);
+            },
+            'Should be able to find NaN': function() {
+                var result = includes([NaN], NaN);
+                eq(result, true);
+            }
+
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  

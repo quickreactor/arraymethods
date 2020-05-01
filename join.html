@@ -1,0 +1,90 @@
+<head>
+    <script src="tinytest.js"></script>
+    <script>
+        //The join() method creates and returns a new string by concatenating all of the elements in an array (or an array-like object), separated by commas or a specified separator string. If the array has only one item, then that item will be returned without using the separator.
+
+        // Syntax
+        // arr.join([separator])
+
+        // Parameters
+            // separator Optional
+            // Specifies a string to separate each pair of adjacent elements of the array. The separator is converted to a string if necessary. If omitted, the array elements are separated with a comma (","). If separator is an empty string, all elements are joined without any characters in between them.
+
+        // Return value
+        // A string with all array elements joined. If arr.length is 0, the empty string is returned.
+
+        function join(array, separator) {
+            if (this.length) {
+                array = Array.from(this);
+            }
+            let result = '';
+            let splitChar = ','
+            if (separator || separator === '') {
+                splitChar = separator.toString();
+            }
+
+            for (let i = 0; i < array.length; i++) {
+                if (array[i] === null || array[i] === undefined) {
+                    result += '';
+                } else {
+                    result += array[i].toString();
+                }
+                if (i < array.length-1) {
+                    result += splitChar;
+                }
+            }
+            return result;
+        }
+
+        tests({
+            'It should return a new string': function() {
+                let inputString = 'ball';
+                let result = join(inputString);
+                eq(typeof result, 'string');
+            },
+            'Returned string should concatenate all the elements': function() {
+                let result = join([1,2,3,4]);
+                eq(result, '1,2,3,4');
+            },
+            'If no separator, each element should be separated by a comma': function() {
+                let result = join([1,2,3,4]);
+                eq(result, '1,2,3,4');
+            },
+            'It separator is supplied, elements should be separated by the specified separator string': function() {
+                let result = join([1,2,3,4], '!');
+                eq(result, '1!2!3!4');
+            },
+            'The separator should be converted to a string if necessary': function() {
+                let result = join([1,2,3,4], 2);
+                eq(result, '1222324');
+            },
+            'If separator is an empty string, elements are joined without any characters in between them': function() {
+                let result = join([1,2,3,4], '');
+                eq(result, '1234');
+            },
+            'If the input array has only one item it should return the item without using the separator': function() {
+                let result = join([1]);
+                eq(result, '1');
+            },
+            'If the array length is 0 an empty string is returned': function() {
+                let result = join([]);
+                eq(result, '');
+            },
+            'If an element is undefined, null or an empty array [] it is converted to an empty string': function() {
+                let result = join([1,[],null,undefined,5]);
+                eq(result, '1,,,,5');
+            },
+            'It should accept arrays or array-like objects': function() {
+                function f() {
+                return join.call(arguments);
+                }
+                result = f(1, 'a', true);
+                eq(result, '1,a,true');
+            }
+        });
+    </script>
+  </head>
+  <body>
+    
+  </body>
+  
